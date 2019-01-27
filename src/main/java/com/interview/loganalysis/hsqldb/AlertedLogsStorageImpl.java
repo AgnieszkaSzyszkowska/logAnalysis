@@ -19,11 +19,11 @@ public class AlertedLogsStorageImpl implements AlertedLogsStorage {
 
     @Override
     public void storeAlertedLogs(final Log alertedLog) {
-        LOGGER.info(alertedLog.getUniqueId() + " " + alertedLog.getDuration());
         repository.save(createAlertLog(alertedLog));
     }
 
     private AlertLog createAlertLog(final Log alertedLog) {
+        LOGGER.info("Log is being parsed to entity object: {}", alertedLog.toString());
         final Optional<String> logType = Optional.ofNullable(alertedLog.getLogType());
 
         if (logType.isPresent()) {

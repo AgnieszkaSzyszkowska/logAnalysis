@@ -30,26 +30,27 @@ public class InputLogDataImpl implements InputLogData {
 
         final BufferedReader br = Files.newBufferedReader(Paths.get(fileName));
 
-            return br.lines()
-                    .peek(System.out::println)
-                    .map(line -> {
-                        try {
-                            return objectMapper.readValue(line, InputLog.class);
-                        } catch (IOException e) {
-                            LOGGER.warn("File parsing problem: ", e);
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .map(inputLog -> {
-                        try {
-                            return createDomainInputLog(inputLog);
-                        } catch (UnrecognizedStateException e) {
-                            LOGGER.warn("State field not recognized: ", e);
-                        }
+        return br.lines()
+                .map(line -> {
+                    try {
+                        return objectMapper.readValue(line, InputLog.class);
+                    } catch (IOException e) {
+                        LOGGER.warn("File parsing problem for line: {}", line);
+                        LOGGER.debug("Exception: ", e);
                         return null;
-                    })
-                    .filter(Objects::nonNull);
+                    }
+                })
+                .filter(Objects::nonNull)
+                .map(inputLog -> {
+                    try {
+                        return createDomainInputLog(inputLog);
+                    } catch (UnrecognizedStateException e) {
+                        LOGGER.warn("State field not recognized for id: {}", inputLog.getUniqueId());
+                        LOGGER.debug("Exception: ", e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull);
 
     }
 
@@ -66,9 +67,12 @@ public class InputLogDataImpl implements InputLogData {
 
     private InputLogState assignState(final String state) throws UnrecognizedStateException {
         switch (state) {
-            case "STARTED" : return InputLogState.STARTED;
-            case "FINISHED" : return InputLogState.FINISHED;
-            default : throw new UnrecognizedStateException("state");
+            case "STARTED":
+                return InputLogState.STARTED;
+            case "FINISHED":
+                return InputLogState.FINISHED;
+            default:
+                throw new UnrecognizedStateException("state");
         }
     }
 }

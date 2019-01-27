@@ -15,13 +15,13 @@ class AlertLog {
 
     @Id
     private String id;
-    @Column
+    @Column(nullable = false)
     private long duration;
     @Column
     private String type;
     @Column
     private String host;
-    @Column
+    @Column(nullable = false)
     private Boolean alert;
 
     AlertLog(final String id, final long duration, final Boolean alert) {
