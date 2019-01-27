@@ -1,0 +1,7 @@
+CREATE TABLE alert_log (
+  id VARCHAR(30) PRIMARY KEY NOT NULL,
+  duration INTEGER NOT NULL,
+  type VARCHAR(50),
+  host VARCHAR(50),
+  alert VARCHAR(1) DEFAULT 0 NOT NULL
+);
